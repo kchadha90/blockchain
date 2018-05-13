@@ -1,4 +1,7 @@
-import com.google.gson.Gson;
+/*
+ * Copyright (c) 2018, kchadha
+ */
+
 import com.google.gson.GsonBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -7,13 +10,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Singleton BlockChain
+ * BlockChain singleton class
+ *
  */
 public class BlockChain {
     private List<Block> blockChain;
     private static int difficulty = 5;
 
 
+    /**
+     * Private constructor for singleton class
+     */
     private BlockChain() {
         this.blockChain = new ArrayList<>();
     }
@@ -22,6 +29,15 @@ public class BlockChain {
         return new BlockChain();
     }
 
+    /**
+     * Function to add the transaction
+     *
+     * A Transaction comprises of UserData and bunch of other information like
+     * Hash, PreviousHash and Timestamp
+     *
+     * @param userData User Data object
+     * @return Boolean, which indicates if adding of transaction to the blockchain was successful or not
+     */
     public Boolean createTransaction(UserData userData){
         if (this.blockChain.isEmpty()) {
             this.blockChain.add(new Block(userData, "0").mineBlock(difficulty));
@@ -37,6 +53,12 @@ public class BlockChain {
         return Boolean.FALSE;
     }
 
+    /**
+     * Helper function to evaluate of the blockchain is valid so far
+     * THis function is called everytime an attempt to add a transaction is made
+     *
+     * @return Boolean, if the chain is valid or not
+     */
     private Boolean isChainValid(){
 
         String hashTarget = new String(new char[difficulty]).replace('\0', '0');
@@ -45,6 +67,7 @@ public class BlockChain {
             Block currentBlock = this.blockChain.get(i);
             Block previousBlock = this.blockChain.get(i-1);
 
+            // check if current hash are valid
             if(!currentBlock.getHash().equals(currentBlock.generateHash())) {
                 System.out.println("Current block actual hash: " + currentBlock.generateHash());
                 System.out.println("Current block saved hash: " + currentBlock.getHash());
@@ -52,13 +75,14 @@ public class BlockChain {
                 return Boolean.FALSE;
             }
 
+            // check if previous hash are valid
             if(!previousBlock.generateHash().equals(currentBlock.getPreviousHash())){
                 System.out.println("Previous block actual hash: " + previousBlock.generateHash());
                 System.out.println("Previous block saved hash: " + currentBlock.getPreviousHash());
                 return Boolean.FALSE;
             }
 
-            //check if hash is solved
+            //check if the block was really mined
             if(!currentBlock.getHash().substring(0, difficulty).equals(hashTarget)) {
                 System.out.println("This block hasn't been mined");
                 return Boolean.FALSE;
@@ -67,10 +91,21 @@ public class BlockChain {
         return Boolean.TRUE;
     }
 
+    /**
+     * Helper function to get previous block hash
+     *
+     * @return String
+     */
     private String getPreviousBlockHash() {
         return this.blockChain.get(blockChain.size() - 1).getHash();
     }
 
+
+    /**
+     * Overriding toString to print the blockchain in nice json format
+     *
+     * @return String
+     */
     @Override
     public String toString(){
         if(this.blockChain.isEmpty()){

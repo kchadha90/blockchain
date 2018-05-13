@@ -1,5 +1,10 @@
-import sun.security.util.Password;
+/*
+ * Copyright (c) 2018, kchadha
+ */
 
+/**
+ * UserData class to prototype any data to be stored in the block
+ */
 public class UserData {
     public String getDomain() {
         return domain;

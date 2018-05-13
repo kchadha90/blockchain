@@ -1,8 +1,11 @@
+/*
+ * Copyright (c) 2018, kchadha
+ */
+
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.time.ZonedDateTime;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 public class Block {
     private UserData userData;

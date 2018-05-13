@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018, kchadha
+ */
+
 import org.junit.jupiter.api.Test;
 import sun.security.util.Password;
 

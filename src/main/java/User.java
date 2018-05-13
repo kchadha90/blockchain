@@ -1,7 +1,10 @@
+/*
+ * Copyright (c) 2018, kchadha
+ */
+
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 import java.security.*;
-import java.security.spec.ECGenParameterSpec;
 
 public class User {
 
