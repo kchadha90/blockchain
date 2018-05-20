@@ -13,10 +13,12 @@ import user.UserData;
 
 import static network.VertxHttpClient.SYNC_ADDRESS;
 
+/**
+ *
+ */
 public class TestTransactionHandler implements Handler<RoutingContext> {
 
     private final Vertx vertx;
-
     public TestTransactionHandler(Vertx vertx) {
         this.vertx = vertx;
     }
@@ -26,19 +28,21 @@ public class TestTransactionHandler implements Handler<RoutingContext> {
 
         Ledger ledger = Ledger.getInstance();
         Boolean success = ledger.createTransaction(
-                new UserData("example", "chadha", "test123"));
+                new UserData("exajhghjgfjgfjhfgmple", "chadha", "test123"));
         HttpServerResponse response = routingContext.response();
 
-        String msg;
+        String status;
         if (success) {
             vertx.eventBus().send(SYNC_ADDRESS, Boolean.TRUE);
             response.setStatusCode(200);
-            msg = "TestTransaction: Successfully added test transaction to the ledger\n";
+            status = "Successful";
         } else {
             response.setStatusCode(500);
-            msg = "TestTransaction: Failed to add test transaction to the ledger\n";
+            status = "Failed";
         }
+
+        System.out.println("TestTransaction: " + status);
         response.putHeader("content-type", "text/plain")
-                .end(msg);
+                .end(status);
     }
 }

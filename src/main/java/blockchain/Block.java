@@ -61,7 +61,7 @@ public class Block {
             this.nonce++;
             this.hash = generateHash();
         }
-        System.out.println("Block Mined, Hash: " + this.hash);
+        System.out.println("Block: Mined, Hash: " + this.hash);
         return this;
     }
 

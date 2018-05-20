@@ -23,7 +23,6 @@ public class Utils {
     public static Boolean isChainValid(List<Block> ledger){
 
         String hashTarget = new String(new char[difficulty]).replace('\0', '0');
-        System.out.println("Validating ledger ... ");
         for (int i = 1; i < ledger.size(); i++) {
             Block currentBlock = ledger.get(i);
             Block previousBlock = ledger.get(i-1);
@@ -54,9 +53,14 @@ public class Utils {
         return Boolean.TRUE;
     }
 
+    /**
+     * @param jsonArray
+     * @return
+     */
     public static Boolean syncLedger(JsonArray jsonArray) {
         List<Block> tempLedger = new ArrayList<>();
-        System.out.println("ledger size received: " + jsonArray.size());
+        Boolean status = Boolean.FALSE;
+        System.out.println("Number of blocks received: " + jsonArray.size());
         for (Object jsonObject : jsonArray){
             String username = ((JsonObject) jsonObject).getString(USERNAME_KEY);
             String domain = ((JsonObject) jsonObject).getString(DOMAIN_KEY);
@@ -69,11 +73,27 @@ public class Utils {
             tempLedger.add(new Block(userData, hash, previous_hash, timestamp, nonce));
         }
 
-        if(tempLedger.size() > Ledger.getInstance().numOfBlocks() && isChainValid(tempLedger)){
-            System.out.println("It's the latest ledger !!! Syncing ... ");
-            Ledger.getInstance().performSync(tempLedger);
-            return Boolean.TRUE;
+        if(tempLedger.size() > Ledger.getInstance().numOfBlocks()){
+            boolean validationStatus = isChainValid(tempLedger);
+            if(validationStatus) {
+                Ledger.getInstance().performSync(tempLedger);
+                status = Boolean.TRUE;
+            }else{
+                status = Boolean.FALSE;
+            }
+            System.out.println("SyncBlockchain: ledger validation status - " + validationStatus);
         }
-        return Boolean.FALSE;
+        return status;
+    }
+
+    /**
+     * @param data
+     * @return
+     */
+    public static Boolean addTransaction(JsonObject data) {
+        String username = data.getString(USERNAME_KEY);
+        String domain = data.getString(DOMAIN_KEY);
+        String password = data.getString(PASSWORD_KEY);
+        return Ledger.getInstance().createTransaction(new UserData(domain, username, password));
     }
 }

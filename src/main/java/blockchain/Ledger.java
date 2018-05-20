@@ -65,15 +65,15 @@ public class Ledger {
     public Boolean createTransaction(UserData userData){
         if (this.ledgerData.isEmpty()) {
             this.ledgerData.add(new Block(userData, "0").mineBlock(difficulty));
-            System.out.println("Verified and added transaction, size: " + this.ledgerData.size());
+            System.out.println("Ledger: Verified and added transaction, size: " + this.ledgerData.size());
             return Boolean.TRUE;
         }
         else if(Utils.isChainValid(this.ledgerData)){
             this.ledgerData.add(new Block(userData, getPreviousBlockHash()).mineBlock(difficulty));
-            System.out.println("Verified and added transaction, size: " + (this.ledgerData.size()));
+            System.out.println("Ledger: Verified and added transaction, size: " + (this.ledgerData.size()));
             return Boolean.TRUE;
         }
-        System.err.println("Blockchain is NOT valid !!");
+        System.err.println("Ledger: Ledger is NOT valid !!");
         return Boolean.FALSE;
     }
 
@@ -114,7 +114,14 @@ public class Ledger {
        // return new GsonBuilder().setPrettyPrinting().create().toJson(jsonArray);
     }
 
+    /**
+     * @return
+     */
     int numOfBlocks() {
+        return this.ledgerData.size();
+    }
+
+    public int getSize() {
         return this.ledgerData.size();
     }
 }

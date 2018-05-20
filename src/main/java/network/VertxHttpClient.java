@@ -12,27 +12,39 @@ import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.json.JsonArray;
 
+/**
+ *
+ */
 public class VertxHttpClient extends AbstractVerticle {
     public static final String SYNC_ADDRESS = "sync_address";
+    private static final int TO_NODE = 8081;
+    public static final int NODE = 8080;
     private HttpClient httpClient;
 
     @Override
-    public void start() throws Exception {
-        // TODO set options
-        HttpClientOptions options = new HttpClientOptions();
+    public void start() {
+
+        HttpClientOptions options = new HttpClientOptions()
+                .setTcpKeepAlive(true)
+                .setReceiveBufferSize(1024 * 1000 * 32)
+                .setKeepAlive(true)
+                .setMaxChunkSize(1024 * 1000 * 32);
 
         this.httpClient = vertx.createHttpClient(options);
         vertx.eventBus().consumer(SYNC_ADDRESS, msg -> {
-            postLedgerToNodes();
+            pushLedgerToNodes();
         });
     }
 
-    private void postLedgerToNodes(){
-        HttpClientRequest request = this.httpClient.post(8081, "localhost", "/sync");
+    /**
+     *
+     */
+    private void pushLedgerToNodes(){
+        HttpClientRequest request = this.httpClient.post(TO_NODE, "localhost", "/sync");
         request.handler(new Handler<HttpClientResponse>() {
             @Override
             public void handle(HttpClientResponse httpClientResponse) {
-                System.out.println("HttpClient: Sent blockchain sync request to node, status: " + httpClientResponse.statusCode());
+                    System.out.println("HttpClient: pushed ledger across available nodes, " + httpClientResponse.statusCode());
             }
         });
         String body = Ledger.getInstance().toString();
